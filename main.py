@@ -1,7 +1,8 @@
-from os import name, stat
+from typing_extensions import Required
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS, cross_origin
 
 
 import uuid
@@ -10,6 +11,8 @@ app = Flask(__name__)
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 db = SQLAlchemy(app)
 
@@ -18,16 +21,18 @@ class PeopleModel(db.Model):
     id = db.Column(db.String(100), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
+    activeTaskCount = db.Column(db.Integer, nullable=False)
     favoriteProgrammingLanguage = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, id, name, email, favoriteProgrammingLanguage):
+    def __init__(self, id, name, email, activeTaskCount, favoriteProgrammingLanguage):
         self.id = id
         self.name = name
         self.email = email
+        self.activeTaskCount = activeTaskCount
         self.favoriteProgrammingLanguage = favoriteProgrammingLanguage
 
 
-class TaskModel(db.model):
+class TaskModel(db.Model):
     id = db.Column(db.String(100), primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     details = db.Column(db.String(100), nullable=False)
@@ -45,7 +50,7 @@ class TaskModel(db.model):
 
 
 # creating the DB- this should happen only once!
-# db.create_all()
+db.create_all()
 
 
 person_post_args = reqparse.RequestParser()
@@ -66,26 +71,39 @@ person_patch_args.add_argument(
     "favoriteProgrammingLanguage", type=str, help="The favoriteProgrammingLanguage of the person is missing")
 
 
-# convert the person to JSON
+task_post_args = reqparse.RequestParser()
+task_post_args.add_argument(
+    "title", type=str, help="The title of the task is missing", required=True)
+task_post_args.add_argument(
+    "details", type=str, help="The details of the task are missing", required=True)
+task_post_args.add_argument(
+    "dueDate", type=str, help="The dueDate of the task is missing", required=True)
+
+
+# Convert the person to JSON
 def createJSONPerson(data):
-    return {
-        'id': data.id,
-        'name': data.name,
-        'email': data.email,
-        'favoriteProgrammingLanguage': data.favoriteProgrammingLanguage}
-
-
-def createPatchPersonResponse(data):
     return {
         'name': data.name,
         'email': data.email,
         'favoriteProgrammingLanguage': data.favoriteProgrammingLanguage,
-        "activeTaskCount": 0,  # TODO: change
+        'activeTaskCount': data.activeTaskCount,
         'id': data.id
     }
 
 
+# Convert the task to JSON
+def createJSONTask(data):
+    return {
+        'title': data.title,
+        'details': data.details,
+        'dueDate': data.dueDate,
+        'status': data.status,
+        'ownerId': data.ownerId
+    }
+
+
 @app.route('/people/', methods=['POST', 'GET'])
+@cross_origin()
 def postOrGetAllPeople():
     if request.method == 'POST':
         # if POST- Add a new person to the system.
@@ -98,7 +116,7 @@ def postOrGetAllPeople():
         while (PeopleModel.query.filter_by(id=new_id).first()):
             new_id = str(uuid.uuid4())
 
-        person = PeopleModel(id=new_id, name=args['name'], email=args['email'],
+        person = PeopleModel(id=new_id, name=args['name'], email=args['email'], activeTaskCount=0,
                              favoriteProgrammingLanguage=args['favoriteProgrammingLanguage'])
         db.session.add(person)
         db.session.commit()
@@ -106,16 +124,16 @@ def postOrGetAllPeople():
     else:
         # if GET- Get a list of all people in the system.
         result = PeopleModel.query.all()
-        if not result:
-            abort(404, message="Could not find people")
         list = []
-        for data in result:
-            list.append(createJSONPerson(data))
+        if result:
+            for data in result:
+                list.append(createJSONPerson(data))
 
         return jsonify(list)
 
 
 @app.route('/people/<string:id>', methods=['PATCH', 'DELETE', 'GET'])
+@cross_origin()
 def getPerson(id):
     if request.method == 'PATCH':
         # if PATCH- update person details.
@@ -133,7 +151,7 @@ def getPerson(id):
 
         db.session.commit()
 
-        return createPatchPersonResponse(result)
+        return createJSONPerson(result)
     elif request.method == 'DELETE':
         # if DELETE- Remove the person whose id is provided fron the system.
         result = PeopleModel.query.filter_by(id=id).first()
@@ -152,16 +170,33 @@ def getPerson(id):
 
 
 @app.route('/people/<string:id>/tasks/', methods=['POST', 'GET'])
-def personTasks():
+@cross_origin()
+def personTasks(id):
     if request.method == 'POST':
-        # TODO: Add a new task to the person URL.
-        print("NOT IMPLEENTED YET")
+        # Add a new task to the person URL.
+        args = task_post_args.parse_args()
+        # TODO: check date
+        # TODO: check if person with the id exists
+        new_id = str(uuid.uuid4())
+        # make sure it is a new ID.
+        while (TaskModel.query.filter_by(id=new_id).first()):
+            new_id = str(uuid.uuid4())
+        task = TaskModel(
+            id=new_id, title=args['title'], details=args['details'], dueDate=args['dueDate'], status="active", ownerId=id)
+        db.session.add(task)
+        db.session.commit()
     else:
         # TODO: Get an array of relevant tasks that belong to the person.
-        print("NOT IMPLEENTED YET")
+        result = TaskModel.query.filter_by(ownerId=id)
+        list = []
+        if result:
+            for data in result:
+                list.append(createJSONPerson(data))
+        return jsonify(list)
 
 
 @app.route('/tasks/<string:id>', methods=['PATCH', 'DELETE', 'GET'])
+@cross_origin()
 def task():
     if request.method == 'PATCH':
         # TODO: Partial update of task details.
@@ -175,6 +210,7 @@ def task():
 
 
 @app.route('/tasks/<string:id>/status', methods=['PUT', 'GET'])
+@cross_origin()
 def taskStatus():
     if request.method == 'PUT':
         # TODO: Set a task's status.
@@ -185,6 +221,7 @@ def taskStatus():
 
 
 @app.route('/tasks/<string:id>/owner', methods=['PUT', 'GET'])
+@cross_origin()
 def taskOwner():
     if request.method == 'PUT':
         # TODO: Set a task's owner.
@@ -195,4 +232,4 @@ def taskOwner():
 
 
 if __name__ == "__main__":
-    app.run(port=9000, debug=True)
+    app.run(port=8009, debug=True)
