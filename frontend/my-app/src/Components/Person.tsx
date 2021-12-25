@@ -4,6 +4,7 @@ import styled from "styled-components";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Calls } from "../Calls";
+import TaskList from "./TaskList";
 
 interface IProps {
   id: string;
@@ -23,7 +24,6 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
   useEffect(() => {
     async function getPerson() {
       const result: IPersonData = await Calls.getPerson(id);
-      console.log(result);
       setFormValues(result);
     }
     getPerson();
@@ -81,6 +81,7 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
           <h3>{id}</h3>
         </div>
       )}
+      <TaskList id={id} />
     </Box>
   );
 }

@@ -191,7 +191,7 @@ def personTasks(id):
         list = []
         if result:
             for data in result:
-                list.append(createJSONPerson(data))
+                list.append(createJSONTask(data))
         return jsonify(list)
 
 
