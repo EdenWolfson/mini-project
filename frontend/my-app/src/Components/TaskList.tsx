@@ -19,7 +19,6 @@ export default function TaskList({ id }: IProps) {
   useEffect(() => {
     async function getTasks() {
       const result = await Calls.getPersonTasks(id);
-      console.log(result);
       setTasks(result);
     }
     getTasks();
@@ -30,7 +29,7 @@ export default function TaskList({ id }: IProps) {
   };
 
   const postNewTask = async (data: ITaskPostValues) => {
-    const newTask: ITaskPostValues = await Calls.postPersonTasks(id, data);
+    await Calls.postPersonTasks(id, data);
     update();
   };
 

@@ -22,7 +22,6 @@ export default function Container() {
 
   const postNewPerson = async (data: IPersonPostValues) => {
     const newPerson: IPersonData = await Calls.postPeople(data);
-    setPeople([...people, newPerson]);
     update();
   };
 

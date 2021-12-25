@@ -50,7 +50,7 @@ class TaskModel(db.Model):
 
 
 # creating the DB- this should happen only once!
-db.create_all()
+# db.create_all()
 
 
 person_post_args = reqparse.RequestParser()
@@ -78,6 +78,29 @@ task_post_args.add_argument(
     "details", type=str, help="The details of the task are missing", required=True)
 task_post_args.add_argument(
     "dueDate", type=str, help="The dueDate of the task is missing", required=True)
+task_post_args.add_argument(
+    "status", type=str, help="The status of the task is missing", required=True)
+
+
+task_patch_args = reqparse.RequestParser()
+task_patch_args.add_argument(
+    "title", type=str, help="The title of the task is missing")
+task_patch_args.add_argument(
+    "details", type=str, help="The details of the task are missing")
+task_patch_args.add_argument(
+    "dueDate", type=str, help="The dueDate of the task is missing")
+task_patch_args.add_argument(
+    "status", type=str, help="The status of the task is missing")
+
+
+task_status_put_args = reqparse.RequestParser()
+task_status_put_args.add_argument(
+    "status", type=str, help="The status of the task is missing", required=True)
+
+
+task_owner_put_args = reqparse.RequestParser()
+task_owner_put_args.add_argument(
+    "ownerId", type=str, help="The status of the task is missing", required=True)
 
 
 # Convert the person to JSON
@@ -177,16 +200,18 @@ def personTasks(id):
         args = task_post_args.parse_args()
         # TODO: check date
         # TODO: check if person with the id exists
+        # TODO: check status
         new_id = str(uuid.uuid4())
         # make sure it is a new ID.
         while (TaskModel.query.filter_by(id=new_id).first()):
             new_id = str(uuid.uuid4())
         task = TaskModel(
-            id=new_id, title=args['title'], details=args['details'], dueDate=args['dueDate'], status="active", ownerId=id)
+            id=new_id, title=args['title'], details=args['details'], dueDate=args['dueDate'], status=args['status'], ownerId=id)
         db.session.add(task)
         db.session.commit()
+        return 'Task created and assigned successfully', 201
     else:
-        # TODO: Get an array of relevant tasks that belong to the person.
+        # Get an array of relevant tasks that belong to the person.
         result = TaskModel.query.filter_by(ownerId=id)
         list = []
         if result:
@@ -197,38 +222,88 @@ def personTasks(id):
 
 @app.route('/tasks/<string:id>', methods=['PATCH', 'DELETE', 'GET'])
 @cross_origin()
-def task():
+def task(id):
     if request.method == 'PATCH':
         # TODO: Partial update of task details.
-        print("NOT IMPLEENTED YET")
+        args = task_patch_args.parse_args()
+        # TODO: check date
+        # TODO: check status
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+
+        if args['titls']:
+            result.title = args['title']
+        if args['details']:
+            result.details = args['details']
+        if args['dueDate']:
+            result.dueDate = args['dueDate']
+        if args['status']:
+            result.status = args['status']
+
+        db.session.commit()
+
+        return createJSONTask(result)
     elif request.method == 'DELETE':
         # TODO: Remove a task from the system.
-        print("NOT IMPLEENTED YET")
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+
+        db.session.delete(result)
+        db.session.commit()
+        return 'Task removed successfully.', 200
     else:
         # TODO: Provide the details of the task whose id is provided.
-        print("NOT IMPLEENTED YET")
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+        return createJSONTask(result)
 
 
 @app.route('/tasks/<string:id>/status', methods=['PUT', 'GET'])
 @cross_origin()
-def taskStatus():
+def taskStatus(id):
     if request.method == 'PUT':
         # TODO: Set a task's status.
-        print("NOT IMPLEENTED YET")
+        args = task_status_put_args.parse_args()
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+        result.status = args['status']
+
+        db.session.commit()
+
+        return "task's status updated successfully.", 204
     else:
         # TODO: Get the status of the task.
-        print("NOT IMPLEENTED YET")
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+        return result.status, 200
 
 
 @app.route('/tasks/<string:id>/owner', methods=['PUT', 'GET'])
 @cross_origin()
-def taskOwner():
+def taskOwner(id):
     if request.method == 'PUT':
         # TODO: Set a task's owner.
+        args = task_owner_put_args.parse_args()
         print("NOT IMPLEENTED YET")
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+        result.ownerId = args['ownerId']
+
+        db.session.commit()
+
+        return "task's status updated successfully.", 204
     else:
         # TODO: Get a task's owner id.
-        print("NOT IMPLEENTED YET")
+        result = TaskModel.query.filter_by(id=id).first()
+        if not result:
+            abort(404, message=f"A task with the id {id} does not exist.")
+        return result.ownerId, 200
 
 
 if __name__ == "__main__":
