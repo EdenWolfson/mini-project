@@ -117,6 +117,7 @@ def createJSONPerson(data):
 # Convert the task to JSON
 def createJSONTask(data):
     return {
+        'id': data.id,
         'title': data.title,
         'details': data.details,
         'dueDate': data.dueDate,
@@ -254,7 +255,7 @@ def task(id):
         db.session.commit()
         return 'Task removed successfully.', 200
     else:
-        # TODO: Provide the details of the task whose id is provided.
+        # Provide the details of the task whose id is provided.
         result = TaskModel.query.filter_by(id=id).first()
         if not result:
             abort(404, message=f"A task with the id {id} does not exist.")

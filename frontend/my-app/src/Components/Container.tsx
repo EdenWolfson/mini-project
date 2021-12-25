@@ -39,8 +39,9 @@ export default function Container() {
     <BigContainer>
       <h1>My New Project!</h1>
       <PeopleContainer>
-        {people.map((person) => (
+        {people.map((person, index) => (
           <Person
+            key={index}
             // email={person.email}
             // favoriteProgrammingLanguage={person.favoriteProgrammingLanguage}
             id={person.id}
