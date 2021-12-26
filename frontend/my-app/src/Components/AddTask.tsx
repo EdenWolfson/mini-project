@@ -1,9 +1,6 @@
-import { Button, IconButton, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, TextField } from "@mui/material";
+import { useState } from "react";
 import styled from "styled-components";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Calls } from "../Calls";
 
 interface IProps {
   ownerId: string;
@@ -26,6 +23,8 @@ export default function AddTask({
 
   const [formValues, setFormValues] = useState<ITaskPostValues>(initFormValues);
 
+  const fields = ["title", "details", "dueDate", "status"];
+
   const handleChange = (
     field: string,
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -45,34 +44,27 @@ export default function AddTask({
   return (
     <Box>
       <TextFieldsContainer>
-        <TextField
-          variant="outlined"
-          label="title"
-          onChange={(event) => handleChange("title", event)}
-        />
-        <TextField
-          variant="outlined"
-          label="details"
-          onChange={(event) => handleChange("details", event)}
-        />
-        <TextField
-          variant="outlined"
-          label="dueDate"
-          onChange={(event) => handleChange("dueDate", event)}
-        />
-        <TextField
-          variant="outlined"
-          label="status"
-          onChange={(event) => handleChange("status", event)}
-        />
+        {fields.map((field, index) => (
+          <TextField
+            key={index}
+            variant="outlined"
+            label={field}
+            onChange={(event) => handleChange(field, event)}
+          />
+        ))}
       </TextFieldsContainer>
-      <Button onClick={handleSubmit}>Add Task</Button>
+      <Button
+        variant="contained"
+        onClick={handleSubmit}
+        style={{ textTransform: "none" }}
+      >
+        Add Task
+      </Button>
     </Box>
   );
 }
 
 const Box = styled.div`
-  /* border: black 1px solid; */
   padding: 20px;
 `;
 

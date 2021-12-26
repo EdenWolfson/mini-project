@@ -1,8 +1,6 @@
-import { Button, Dialog, IconButton, TextField } from "@mui/material";
+import { Button, ButtonGroup, Dialog, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { Calls } from "../Calls";
 import AddIcon from "@mui/icons-material/Add";
 import AddTask from "./AddTask";
@@ -65,14 +63,25 @@ export default function TaskList({ id }: IProps) {
     <div>
       <h2>Tasks:</h2>
       <TasksContainer>
-        {tasks.map((task, index) => (
-          <Button key={index} onClick={() => handleOpenTask(index)}>
-            {task.title}
-          </Button>
-        ))}
+        <ButtonGroup orientation="vertical">
+          {tasks.map((task, index) => (
+            <Button
+              variant="outlined"
+              key={index}
+              onClick={() => handleOpenTask(index)}
+              style={{ textTransform: "none" }}
+            >
+              {task.title}
+            </Button>
+          ))}
+        </ButtonGroup>
       </TasksContainer>
       <IconButton onClick={() => setOpenAddTask(true)}>
-        <AddIcon />
+        <AddIcon
+          style={{
+            color: "#1976d2",
+          }}
+        />
       </IconButton>
       <Dialog open={openAddTask} onClose={closeAddTask}>
         <AddTask

@@ -50,10 +50,18 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
   return (
     <div>
       <IconButton onClick={() => setIsPatch(!isPatch)}>
-        <EditIcon />
+        <EditIcon
+          style={{
+            color: "#1976d2",
+          }}
+        />
       </IconButton>
       <IconButton onClick={() => deleteTask(taskId)}>
-        <DeleteIcon />
+        <DeleteIcon
+          style={{
+            color: "#1976d2",
+          }}
+        />
       </IconButton>
       {isPatch ? (
         <FormContainer>
@@ -65,7 +73,13 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
               onChange={(event) => handleChange(field, event)}
             />
           ))}
-          <Button onClick={handleSubmit}>Patch Task</Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            style={{ textTransform: "none" }}
+          >
+            Patch Task
+          </Button>
         </FormContainer>
       ) : (
         <div>

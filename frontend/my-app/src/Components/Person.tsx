@@ -22,7 +22,6 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
   const [isPatch, setIsPatch] = useState<boolean>(false);
 
   const fields = ["name", "email", "favoriteProgrammingLanguage"];
-  const [forceUpdate, setForceUpdate] = useState<boolean>(false);
 
   useEffect(() => {
     async function getPerson() {
@@ -31,10 +30,6 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
     }
     getPerson();
   }, [id]);
-
-  const update = () => {
-    setForceUpdate(!forceUpdate);
-  };
 
   const handleChange = (
     field: string,
@@ -54,10 +49,18 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
   return (
     <Box>
       <IconButton onClick={() => setIsPatch(!isPatch)}>
-        <EditIcon />
+        <EditIcon
+          style={{
+            color: "#1976d2",
+          }}
+        />
       </IconButton>
       <IconButton onClick={() => deletePerson(id)}>
-        <DeleteIcon />
+        <DeleteIcon
+          style={{
+            color: "#1976d2",
+          }}
+        />
       </IconButton>
       {isPatch ? (
         <FormContainer>
@@ -69,14 +72,20 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
               onChange={(event) => handleChange(field, event)}
             />
           ))}
-          <Button onClick={handleSubmit}>Patch Person</Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            style={{ textTransform: "none" }}
+          >
+            Patch Person
+          </Button>
         </FormContainer>
       ) : (
         <div>
-          <h2>{formValues.name}</h2>
-          <h3>{formValues.email}</h3>
-          <h3>{formValues.favoriteProgrammingLanguage}</h3>
-          <h3>{id}</h3>
+          <Name>{formValues.name}</Name>
+          <Field>{formValues.email}</Field>
+          <Field>{formValues.favoriteProgrammingLanguage}</Field>
+          <Field>{id}</Field>
         </div>
       )}
       <TaskList id={id} />
@@ -85,10 +94,22 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
 }
 
 const Box = styled.div`
-  border: black 1px solid;
+  border: #a7abbe 1px solid;
+  border-right: none;
+  padding: 20px;
+  width: 370px;
 `;
 
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const Name = styled.h2`
+  color: #6a7281;
+  font-size: 30px;
+`;
+
+const Field = styled.h3`
+  color: #3e434b;
 `;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Calls } from "../Calls";
 import styled from "styled-components";
 import AddPerson from "./AddPerson";
@@ -37,7 +37,7 @@ export default function Container() {
 
   return (
     <BigContainer>
-      <h1>My New Project!</h1>
+      <Taskboard>Taskboard</Taskboard>
       <PeopleContainer>
         {people.map((person, index) => (
           <Person
@@ -56,6 +56,13 @@ export default function Container() {
 const BigContainer = styled.div``;
 
 const PeopleContainer = styled.div`
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
+  box-shadow: 0 0 10px #8e9aaf;
+  margin: 20px 50px;
+`;
+
+const Taskboard = styled.h1`
+  margin-top: 50px;
+  color: #8e9aaf;
 `;

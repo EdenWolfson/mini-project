@@ -16,6 +16,8 @@ export default function AddPerson({ postNewPerson }: IProps) {
   const [formValues, setFormValues] =
     useState<IPersonPostValues>(initFormValues);
 
+  const fields = ["name", "email", "favoriteProgrammingLanguage"];
+
   const handleChange = (
     field: string,
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -34,34 +36,38 @@ export default function AddPerson({ postNewPerson }: IProps) {
   return (
     <Box>
       <TextFieldsContainer>
-        <TextField
-          variant="outlined"
-          label={"name"}
-          onChange={(event) => handleChange("name", event)}
-        />
-        <TextField
-          variant="outlined"
-          label={"email"}
-          onChange={(event) => handleChange("email", event)}
-        />
-        <TextField
-          variant="outlined"
-          label={"favoriteProgrammingLanguage"}
-          onChange={(event) =>
-            handleChange("favoriteProgrammingLanguage", event)
-          }
-        />
-        <Button onClick={handleSubmit}>Add Person</Button>
+        {fields.map((field, index) => (
+          <StyledTextField
+            key={index}
+            variant="outlined"
+            label={field}
+            onChange={(event) => handleChange(field, event)}
+          />
+        ))}
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          style={{ textTransform: "none" }}
+        >
+          Add Person
+        </Button>
       </TextFieldsContainer>
     </Box>
   );
 }
 
 const Box = styled.div`
-  border: black 1px solid;
+  border: #a7abbe 1px solid;
+  padding: 20px;
 `;
 
 const TextFieldsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 250px;
+`;
+
+const StyledTextField = styled(TextField)`
+  box-shadow: 0 0 10px #dee4ff;
 `;
