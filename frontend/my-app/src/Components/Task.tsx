@@ -21,6 +21,9 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
     status: undefined,
   });
 
+  const [owner, setOwner] = useState<string>();
+  const [status, setStatus] = useState<string>();
+
   const fields = ["title", "details", "dueDate", "status"];
 
   useEffect(() => {
@@ -45,6 +48,16 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
   const handleSubmit = () => {
     patchTask(taskId, formValues);
     setIsPatch(false);
+  };
+
+  const handleGetOwner = async () => {
+    const response = await Calls.getTaskOwner(taskId);
+    setOwner(response);
+  };
+
+  const handleGetStatus = async () => {
+    const response = await Calls.getTaskStatus(taskId);
+    setStatus(response);
   };
 
   return (
@@ -83,11 +96,17 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
         </FormContainer>
       ) : (
         <SmallContainer>
-          <h2>{task?.title}</h2>
-          <h3>Details: {task?.details}</h3>
-          <h3>Due Date: {task?.dueDate}</h3>
-          <h3>Owner ID: {task?.ownerId}</h3>
-          <h3>Status: {task?.status}</h3>
+          <div>
+            <h2>{task?.title}</h2>
+            <h3>Details: {task?.details}</h3>
+            <h3>Due Date: {task?.dueDate}</h3>
+          </div>
+          <Button onClick={handleGetOwner}>Get Owner</Button>
+          {owner && <h3>Owner ID: {owner}</h3>}
+          <Button>Set Owner</Button>
+          <Button onClick={handleGetStatus}>Get Status</Button>
+          {status && <h3>Status: {status}</h3>}
+          <Button>Set Status</Button>
         </SmallContainer>
       )}
     </Container>

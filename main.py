@@ -277,7 +277,7 @@ def taskStatus(id):
 
         return "task's status updated successfully.", 204
     else:
-        # TODO: Get the status of the task.
+        # Get the status of the task.
         result = TaskModel.query.filter_by(id=id).first()
         if not result:
             abort(404, message=f"A task with the id {id} does not exist.")
@@ -300,7 +300,7 @@ def taskOwner(id):
 
         return "task's status updated successfully.", 204
     else:
-        # TODO: Get a task's owner id.
+        # Get a task's owner id.
         result = TaskModel.query.filter_by(id=id).first()
         if not result:
             abort(404, message=f"A task with the id {id} does not exist.")
