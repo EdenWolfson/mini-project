@@ -1,4 +1,4 @@
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, ButtonGroup, IconButton, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,6 +23,8 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
 
   const [owner, setOwner] = useState<string>();
   const [status, setStatus] = useState<string>();
+  const [isSetStatus, setIsSetStatus] = useState<boolean>(false);
+  const [isSetOwner, setIsSetOwner] = useState<boolean>(false);
 
   const fields = ["title", "details", "dueDate", "status"];
 
@@ -101,12 +103,46 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
             <h3>Details: {task?.details}</h3>
             <h3>Due Date: {task?.dueDate}</h3>
           </div>
-          <Button onClick={handleGetOwner}>Get Owner</Button>
-          {owner && <h3>Owner ID: {owner}</h3>}
-          <Button>Set Owner</Button>
-          <Button onClick={handleGetStatus}>Get Status</Button>
-          {status && <h3>Status: {status}</h3>}
-          <Button>Set Status</Button>
+          <ButtonsContainer>
+            <Button variant="contained" onClick={handleGetOwner}>
+              Get Owner
+            </Button>
+            {owner && <h3>Owner ID: {owner}</h3>}
+            {isSetOwner ? (
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={() => setIsSetOwner(false)}
+                >
+                  Cancel
+                </Button>
+                <TextField size="small" label="New Owner ID" />
+              </div>
+            ) : (
+              <Button variant="contained" onClick={() => setIsSetOwner(true)}>
+                Set Owner
+              </Button>
+            )}
+            <Button variant="contained" onClick={handleGetStatus}>
+              Get Status
+            </Button>
+            {status && <h3>Status: {status}</h3>}
+            {isSetStatus ? (
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={() => setIsSetStatus(false)}
+                >
+                  Cancel
+                </Button>
+                <TextField size="small" label="New Status" />
+              </div>
+            ) : (
+              <Button variant="contained" onClick={() => setIsSetStatus(true)}>
+                Set Status
+              </Button>
+            )}
+          </ButtonsContainer>
         </SmallContainer>
       )}
     </Container>
@@ -133,4 +169,9 @@ const StyledTextField = styled(TextField)`
 const SmallContainer = styled.div`
   text-align: left;
   padding: 0 20px;
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
