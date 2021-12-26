@@ -48,7 +48,7 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
   };
 
   return (
-    <div>
+    <Container>
       <IconButton onClick={() => setIsPatch(!isPatch)}>
         <EditIcon
           style={{
@@ -66,7 +66,7 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
       {isPatch ? (
         <FormContainer>
           {fields.map((field, index) => (
-            <TextField
+            <StyledTextField
               key={index}
               variant="outlined"
               label={field}
@@ -82,19 +82,36 @@ export default function Task({ taskId, patchTask, deleteTask }: IProps) {
           </Button>
         </FormContainer>
       ) : (
-        <div>
+        <SmallContainer>
           <h2>{task?.title}</h2>
           <h3>Details: {task?.details}</h3>
           <h3>Due Date: {task?.dueDate}</h3>
           <h3>Owner ID: {task?.ownerId}</h3>
           <h3>Status: {task?.status}</h3>
-        </div>
+        </SmallContainer>
       )}
-    </div>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  text-align: center;
+  padding: 20px;
+`;
 
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 320px;
+  padding-top: 20px;
+`;
+
+const StyledTextField = styled(TextField)`
+  box-shadow: 0 0 10px #dee4ff;
+`;
+
+const SmallContainer = styled.div`
+  text-align: left;
+  padding: 0 20px;
 `;

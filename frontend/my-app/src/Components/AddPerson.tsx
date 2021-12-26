@@ -33,15 +33,24 @@ export default function AddPerson({ postNewPerson }: IProps) {
     setFormValues(initFormValues);
   };
 
+  const getValue = (field: string) => {
+    return field === "name"
+      ? formValues.name
+      : field === "email"
+      ? formValues.email
+      : formValues.favoriteProgrammingLanguage;
+  };
+
   return (
     <Box>
       <TextFieldsContainer>
-        {fields.map((field, index) => (
+        {fields.map((field: string, index) => (
           <StyledTextField
             key={index}
             variant="outlined"
             label={field}
             onChange={(event) => handleChange(field, event)}
+            value={getValue(field)}
           />
         ))}
         <Button

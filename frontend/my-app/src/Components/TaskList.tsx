@@ -61,7 +61,7 @@ export default function TaskList({ id }: IProps) {
 
   return (
     <div>
-      <h2>Tasks:</h2>
+      <Tasks>Tasks:</Tasks>
       <TasksContainer>
         <ButtonGroup orientation="vertical">
           {tasks.map((task, index) => (
@@ -100,4 +100,8 @@ export default function TaskList({ id }: IProps) {
 const TasksContainer = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const Tasks = styled.h2`
+  color: #6a7281;
 `;

@@ -45,21 +45,21 @@ export default function AddTask({
     <Box>
       <TextFieldsContainer>
         {fields.map((field, index) => (
-          <TextField
+          <StyledTextField
             key={index}
             variant="outlined"
             label={field}
             onChange={(event) => handleChange(field, event)}
           />
         ))}
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          style={{ textTransform: "none" }}
+        >
+          Add Task
+        </Button>
       </TextFieldsContainer>
-      <Button
-        variant="contained"
-        onClick={handleSubmit}
-        style={{ textTransform: "none" }}
-      >
-        Add Task
-      </Button>
     </Box>
   );
 }
@@ -71,4 +71,10 @@ const Box = styled.div`
 const TextFieldsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 330px;
+`;
+
+const StyledTextField = styled(TextField)`
+  box-shadow: 0 0 10px #dee4ff;
 `;
