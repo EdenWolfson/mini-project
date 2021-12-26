@@ -225,7 +225,7 @@ def personTasks(id):
 @cross_origin()
 def task(id):
     if request.method == 'PATCH':
-        # TODO: Partial update of task details.
+        # Partial update of task details.
         args = task_patch_args.parse_args()
         # TODO: check date
         # TODO: check status
@@ -233,7 +233,7 @@ def task(id):
         if not result:
             abort(404, message=f"A task with the id {id} does not exist.")
 
-        if args['titls']:
+        if args['title']:
             result.title = args['title']
         if args['details']:
             result.details = args['details']
@@ -246,7 +246,7 @@ def task(id):
 
         return createJSONTask(result)
     elif request.method == 'DELETE':
-        # TODO: Remove a task from the system.
+        # Remove a task from the system.
         result = TaskModel.query.filter_by(id=id).first()
         if not result:
             abort(404, message=f"A task with the id {id} does not exist.")

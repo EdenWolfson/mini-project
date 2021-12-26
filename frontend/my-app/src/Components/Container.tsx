@@ -21,7 +21,7 @@ export default function Container() {
   };
 
   const postNewPerson = async (data: IPersonPostValues) => {
-    const newPerson: IPersonData = await Calls.postPeople(data);
+    await Calls.postPeople(data);
     update();
   };
 
@@ -42,10 +42,7 @@ export default function Container() {
         {people.map((person, index) => (
           <Person
             key={index}
-            // email={person.email}
-            // favoriteProgrammingLanguage={person.favoriteProgrammingLanguage}
             id={person.id}
-            // name={person.name}
             patchPerson={patchPerson}
             deletePerson={deletePerson}
           />

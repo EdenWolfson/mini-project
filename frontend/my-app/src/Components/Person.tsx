@@ -21,13 +21,20 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
 
   const [isPatch, setIsPatch] = useState<boolean>(false);
 
+  const fields = ["name", "email", "favoriteProgrammingLanguage"];
+  const [forceUpdate, setForceUpdate] = useState<boolean>(false);
+
   useEffect(() => {
     async function getPerson() {
       const result: IPersonData = await Calls.getPerson(id);
       setFormValues(result);
     }
     getPerson();
-  }, []);
+  }, [id]);
+
+  const update = () => {
+    setForceUpdate(!forceUpdate);
+  };
 
   const handleChange = (
     field: string,
@@ -54,23 +61,14 @@ export default function Person({ id, patchPerson, deletePerson }: IProps) {
       </IconButton>
       {isPatch ? (
         <FormContainer>
-          <TextField
-            variant="outlined"
-            label={"name"}
-            onChange={(event) => handleChange("name", event)}
-          />
-          <TextField
-            variant="outlined"
-            label={"email"}
-            onChange={(event) => handleChange("email", event)}
-          />
-          <TextField
-            variant="outlined"
-            label={"favoriteProgrammingLanguage"}
-            onChange={(event) =>
-              handleChange("favoriteProgrammingLanguage", event)
-            }
-          />
+          {fields.map((field, index) => (
+            <TextField
+              key={index}
+              variant="outlined"
+              label={field}
+              onChange={(event) => handleChange(field, event)}
+            />
+          ))}
           <Button onClick={handleSubmit}>Patch Person</Button>
         </FormContainer>
       ) : (

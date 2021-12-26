@@ -21,6 +21,13 @@ interface ITaskPostValues {
     ownerId: string;
 }
 
+interface ITaskPutValues {
+    title: string;
+    details: string;
+    dueDate: string;
+    status: "active" | "done" | undefined;
+}
+
 
 interface ITaskData {
     id: string;

@@ -36,16 +36,29 @@ export default function TaskList({ id }: IProps) {
     update();
   };
 
+  const patchTask = async (id: string, data: any) => {
+    await Calls.patchTask(id, data);
+    closeTaskDetails();
+    update();
+  };
+
   const closeAddTask = () => {
     setOpenAddTask(false);
   };
 
-  const handleOpenTask = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    index: number
-  ) => {
+  const closeTaskDetails = () => {
+    setOpenTaskDetails(false);
+  };
+
+  const handleOpenTask = (index: number) => {
     setTaskId(tasks[index].id);
     setOpenTaskDetails(true);
+  };
+
+  const deleteTask = async (id: string) => {
+    await Calls.deleteTask(id);
+    closeTaskDetails();
+    update();
   };
 
   return (
@@ -53,7 +66,7 @@ export default function TaskList({ id }: IProps) {
       <h2>Tasks:</h2>
       <TasksContainer>
         {tasks.map((task, index) => (
-          <Button key={index} onClick={(e) => handleOpenTask(e, index)}>
+          <Button key={index} onClick={() => handleOpenTask(index)}>
             {task.title}
           </Button>
         ))}
@@ -61,15 +74,15 @@ export default function TaskList({ id }: IProps) {
       <IconButton onClick={() => setOpenAddTask(true)}>
         <AddIcon />
       </IconButton>
-      <Dialog open={openAddTask} onClose={() => setOpenAddTask(false)}>
+      <Dialog open={openAddTask} onClose={closeAddTask}>
         <AddTask
           ownerId={id}
           postNewTask={postNewTask}
           closeAddTask={closeAddTask}
         />
       </Dialog>
-      <Dialog open={openTaskDetails} onClose={() => setOpenTaskDetails(false)}>
-        <Task taskId={taskId} />
+      <Dialog open={openTaskDetails} onClose={closeTaskDetails}>
+        <Task taskId={taskId} patchTask={patchTask} deleteTask={deleteTask} />
       </Dialog>
     </div>
   );
