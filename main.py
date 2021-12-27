@@ -1,4 +1,3 @@
-from typing_extensions import Required
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
@@ -50,7 +49,7 @@ class TaskModel(db.Model):
 
 
 # creating the DB- this should happen only once!
-# db.create_all()
+db.create_all()
 
 
 person_post_args = reqparse.RequestParser()
